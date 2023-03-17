@@ -60,6 +60,20 @@ int measuredistanceUltrasonic(void) {
   return distance;
 }
 
+int saturate(int value){
+  int satValue = 0;
+  if(value > 3000){
+    satValue = 3000;
+  }
+
+  if(value < 0){
+    satValue = 0;
+  }
+
+  return satValue;
+}
+
+
 
 void enable_motors()
 {
@@ -83,10 +97,10 @@ void driveDistanceSonar(int target){
     error = -  target  + currentDist;
 
     Serial.println(error);
-      left_font_motor.writeMicroseconds(1500 + Kp*error);
-      left_rear_motor.writeMicroseconds(1500 + Kp*error);
-      right_rear_motor.writeMicroseconds(1500 - Kp*error);
-      right_font_motor.writeMicroseconds(1500 - Kp*error);
+      left_font_motor.writeMicroseconds(saturate(1500 + Kp*error));
+      left_rear_motor.writeMicroseconds(saturate(1500 + Kp*error));
+      right_rear_motor.writeMicroseconds(saturate(1500 - Kp*error));
+      right_font_motor.writeMicroseconds(saturate(1500 - Kp*error));
   }
       //shut down motors once complete
       
