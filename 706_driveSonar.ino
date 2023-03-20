@@ -18,6 +18,11 @@ const byte right_rear = 50;
 const byte right_front = 51;
 
 
+int lastAngle = 0;
+int lastDistance = 0;
+int absoluteX = 0;
+int absoluteY = 0;
+int absoluteAngle = 0;
 
 
 void setup() {
@@ -70,9 +75,47 @@ int saturate(int value){
   if(value < 0){
     satValue = 0;
   }
-
   return satValue;
 }
+
+
+double KalmanSonar(double rawdata, double prevEstimate){
+  double at;
+  double prevVariance;
+  double rt = 1;
+  double qt = 1;
+  double ct;
+  double pred;
+
+  
+  double firstPred = at*prevEstimate;
+  double firstVariance = at*prevVariance*at+rt; //at should be transposed
+  double KalmanGain = firstVariance*ct*(ct*firstVariance*ct+qt)^-1;
+
+  pred = firstPred + KalmanGain*(ct*firstPred);
+
+  variance = (1-KalmanGain*ct)*firstVariance;
+  
+  
+
+  
+}
+
+
+void calculatePosition(){
+    //update absolute angle
+    absoluteAngle += lastAngle;
+
+    //reset angle to always be less than 360
+    if(absoluteAngle >= 360){
+      absoluteAngle -= 360;
+    }
+
+    //calculate X / y position
+    absoluteX += cos(absoluteAngle)*lastDistance; //lastDistance MUST be updated using getDistanceUltrasonic()
+    absoluteY += sin(absoluteAngle)*lastDistance;
+}
+
 
 
 
